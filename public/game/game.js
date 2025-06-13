@@ -13,8 +13,15 @@ function mostrarFrutaPensada() {
   const frutaAleatoria = frutas[Math.floor(Math.random() * frutas.length)];
   frutaActual = frutaAleatoria;
   frutaPensadaImg.src = `../assets/${frutaAleatoria}_pensada.png`;
+
+
+  frutaPensadaImg.classList.remove('animada');
+  void frutaPensadaImg.offsetWidth;
+  frutaPensadaImg.classList.add('animada');
+
   pensamientoDiv.style.display = 'flex';
 }
+
 
 
 setTimeout(() => {

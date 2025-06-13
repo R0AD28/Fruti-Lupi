@@ -106,4 +106,19 @@ body {
   margin-top: -20%;
 }
 
+@keyframes aparecerFruta {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#fruta-pensada.animada {
+  animation: aparecerFruta 0.4s ease;
+}
+
 
