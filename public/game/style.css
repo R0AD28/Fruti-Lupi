@@ -7,7 +7,7 @@
 body {
   height: 100vh;
   width: 100vw;
-  background-image: url(assets/escenario.jpg);
+  background-image: url(../assets/escenario.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -29,7 +29,7 @@ body {
   right: 0;
   height: 40vh;
   width: auto;
-  margin: 0px 15%;
+  margin: 0px 30%;
 }
 
 #vidas {
@@ -46,20 +46,24 @@ body {
 
 #contenedor-frutas {
   position: absolute;
-  top: 50px;
-  right: 50px;
-  width: 60vw;
+  top: 5%;
+  left: 55%;
+  transform: translateX(-50%);
+  width: 45vw;
   height: 70vh;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  background-color: rgba(255, 255, 255, 0.2);
-  border: 2px solid #ffffff;
-  border-radius: 50px;
-  backdrop-filter: blur(5px);
+  justify-items: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 40px;
+  backdrop-filter: blur(6px);
+  padding: 20px;
 }
 
+
 .fruta {
-  width: 10vw;
+  width: 15vw;
   height: auto;
 }

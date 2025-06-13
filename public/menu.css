@@ -1,0 +1,56 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('./assets/escenario.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  overflow: hidden;
+}
+
+.menu-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 30px;
+}
+
+#logo {
+  width: 700px;
+}
+
+button {
+  margin-top: 50px;
+  font-family: 'Ruslan Display', cursive;
+  font-size: 50px;
+  background: transparent;
+  border: none;
+  color: white;
+  text-shadow: 3px 3px 0 black;
+  cursor: pointer;
+}
+
+#lupi {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 40vh;
+  margin: 50px;
+}
+button:hover {
+  color: rgb(0, 0, 0);
+  text-shadow: 3px 3px 0 rgb(255, 255, 255), 0 0 10px rgb(255, 255, 255);
+  transform: scale(1.05);
+}
+
