@@ -66,4 +66,44 @@ body {
 .fruta {
   width: 15vw;
   height: auto;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
 }
+
+.fruta:hover {
+  transform: scale(1.05);
+}
+
+.fruta:active {
+  transform: scale(0.9);
+}
+
+
+
+#pensamiento {
+  position: absolute;
+  top: 20%;
+  left: 15%;
+  width: 15vw;
+  height: 15vw;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+#burbuja {
+  width: 100%;
+  height: auto;
+  position: absolute;
+}
+
+#fruta-pensada {
+  width: 7vw;
+  height: auto;
+  position: relative;
+  z-index: 1;
+  margin-top: -20%;
+}
+
+
