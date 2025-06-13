@@ -68,7 +68,9 @@ body {
   height: auto;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   cursor: pointer;
+  animation: burbujaFlotante 3s ease-in-out infinite;
 }
+
 
 .fruta:hover {
   transform: scale(1.05);
@@ -76,6 +78,18 @@ body {
 
 .fruta:active {
   transform: scale(0.9);
+}
+
+@keyframes burbujaFlotante {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-25px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 
