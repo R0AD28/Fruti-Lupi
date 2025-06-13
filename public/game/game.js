@@ -22,28 +22,27 @@ setTimeout(() => {
 }, 2000);
 
 frutasEnPantalla.forEach((frutaHTML) => {
-  frutaHTML.addEventListener('click', () => {
-    //const ruta = frutaHTML.src;
-    //const frutaPresionada = frutas.find(nombre => ruta.includes(`${nombre}_burbuja`));
-
-    const frutaPresionada = frutaHTML.dataset.fruta;
-
-    if (frutaPresionada === frutaActual) {
-      mostrarFrutaPensada();
-    } else {
-
-      vidasRestantes--;
-      if (vidasRestantes >= 0) {
-        vidas[vidasRestantes].style.visibility = 'hidden';
-      }
-
-      if (vidasRestantes === 0) {
-        alert('¡Juego terminado!');
-        window.location.reload();
+    frutaHTML.addEventListener('click', () => {
+      const frutaPresionada = frutaHTML.dataset.fruta;
+      const frutaCorrecta = frutaActual; // Guardar antes de cambiar
+  
+      console.log('Presionaste:', frutaPresionada, '| Debías presionar:', frutaCorrecta);
+  
+      if (frutaPresionada === frutaCorrecta) {
+        setTimeout(mostrarFrutaPensada, 300);
       } else {
-        mostrarFrutaPensada();
+        vidasRestantes--;
+        if (vidasRestantes >= 0) {
+          vidas[vidasRestantes].style.visibility = 'hidden';
+        }
+  
+        if (vidasRestantes === 0) {
+          alert('¡Juego terminado!');
+          window.location.reload();
+        } else {
+          setTimeout(mostrarFrutaPensada, 300);
+        }
       }
-    }
-    console.log('Presionaste:', frutaPresionada, '| Debías presionar:', frutaActual);
+    });
   });
-});
+  
