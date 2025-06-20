@@ -12,6 +12,20 @@ let frutaEnPantalla = false; // Evita mostrar múltiples frutas
 let puedeLeer = true;        // Controla lectura del ESP32
 let jugadaEnCurso = false;   // Bloquea múltiples ejecuciones al presionar fruta
 
+const pantallaFinal = document.getElementById("game-over-screen");
+const btnReiniciar = document.getElementById("btn-reiniciar");
+const btnMenu = document.getElementById("btn-menu");
+
+btnReiniciar.addEventListener("click", () => {
+  window.location.reload();
+});
+
+btnMenu.addEventListener("click", () => {
+  window.location.href = "../index.html"; 
+});
+
+
+
 function mostrarFrutaPensada() {
   if (frutaEnPantalla) return;
   frutaEnPantalla = true;
@@ -69,8 +83,7 @@ function verificarFruta(frutaPresionada) {
         }
 
         if (vidasRestantes === 0) {
-          alert('¡Juego terminado!');
-          window.location.reload();
+          pantallaFinal.classList.remove("oculto");
         } else {
           setTimeout(() => {
             mostrarFrutaPensada();
