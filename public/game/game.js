@@ -107,6 +107,11 @@ function animarExplosion(frutaImg, callback) {
     "bubble_pop_frame_06"
   ];
 
+  // Sonido burbuja pop
+  const popSound = new Audio("../assets/music/pop_sound.mp3");
+  popSound.volume = 0.6;
+  popSound.play().catch(err => console.error("Error al reproducir sonido pop:", err));
+
   const originalSrc = frutaImg.src;
 
   let index = 0;
