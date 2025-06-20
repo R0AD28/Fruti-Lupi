@@ -21,7 +21,7 @@ btnReiniciar.addEventListener("click", () => {
 });
 
 btnMenu.addEventListener("click", () => {
-  window.location.href = "../index.html"; 
+  window.location.href = "../index.html";
 });
 
 
@@ -34,7 +34,7 @@ function mostrarFrutaPensada() {
   frutaPensadaImg.classList.remove('animada');
 
   let cambios = 0;
-  const maxCambios = 12; 
+  const maxCambios = 12;
   const intervalo = setInterval(() => {
     const frutaTemp = frutas[Math.floor(Math.random() * frutas.length)];
     frutaPensadaImg.src = `../assets/${frutaTemp}_pensada.png`;
@@ -70,6 +70,13 @@ function verificarFruta(frutaPresionada) {
   const frutaImg = [...frutasEnPantalla].find(img => img.dataset.fruta === frutaPresionada);
 
   if (frutaImg) {
+    
+    if (frutaPresionada !== frutaCorrecta) {
+      frutasEnPantalla.forEach(el => {
+        el.classList.add('temblor');
+        setTimeout(() => el.classList.remove('temblor'), 400);
+      });
+    }
     animarExplosion(frutaImg, () => {
       if (frutaPresionada === frutaCorrecta) {
         setTimeout(() => {
