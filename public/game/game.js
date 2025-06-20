@@ -16,53 +16,99 @@ function mostrarFrutaPensada() {
   if (frutaEnPantalla) return;
   frutaEnPantalla = true;
 
-  const frutaAleatoria = frutas[Math.floor(Math.random() * frutas.length)];
-  frutaActual = frutaAleatoria;
-  frutaPensadaImg.src = `../assets/${frutaAleatoria}_pensada.png`;
-
-  frutaPensadaImg.classList.remove('animada');
-  void frutaPensadaImg.offsetWidth;
-  frutaPensadaImg.classList.add('animada');
-
   pensamientoDiv.style.display = 'flex';
+  frutaPensadaImg.classList.remove('animada');
+
+  let cambios = 0;
+  const maxCambios = 12; 
+  const intervalo = setInterval(() => {
+    const frutaTemp = frutas[Math.floor(Math.random() * frutas.length)];
+    frutaPensadaImg.src = `../assets/${frutaTemp}_pensada.png`;
+    cambios++;
+
+    if (cambios >= maxCambios) {
+      clearInterval(intervalo);
+
+      const frutaFinal = frutas[Math.floor(Math.random() * frutas.length)];
+      frutaActual = frutaFinal;
+      frutaPensadaImg.src = `../assets/${frutaFinal}_pensada.png`;
+
+      void frutaPensadaImg.offsetWidth;
+      frutaPensadaImg.classList.add('animada');
+    }
+  }, 100);
 }
+
 
 setTimeout(() => {
   mostrarFrutaPensada();
 }, 2000);
 
 function verificarFruta(frutaPresionada) {
-  if (jugadaEnCurso) return; // Evitar múltiples respuestas rápidas
+  if (jugadaEnCurso) return;
   jugadaEnCurso = true;
 
   const frutaCorrecta = frutaActual;
+  frutaEnPantalla = false;
 
   console.log('Presionaste:', frutaPresionada, '| Debías presionar:', frutaCorrecta);
 
-  frutaEnPantalla = false; // Para mostrar nueva fruta
+  const frutaImg = [...frutasEnPantalla].find(img => img.dataset.fruta === frutaPresionada);
 
-  if (frutaPresionada === frutaCorrecta) {
-    setTimeout(() => {
-      mostrarFrutaPensada();
-      jugadaEnCurso = false;
-    }, 300);
+  if (frutaImg) {
+    animarExplosion(frutaImg, () => {
+      if (frutaPresionada === frutaCorrecta) {
+        setTimeout(() => {
+          mostrarFrutaPensada();
+          jugadaEnCurso = false;
+        }, 100);
+      } else {
+        vidasRestantes--;
+        if (vidasRestantes >= 0) {
+          vidas[vidasRestantes].style.visibility = 'hidden';
+        }
+
+        if (vidasRestantes === 0) {
+          alert('¡Juego terminado!');
+          window.location.reload();
+        } else {
+          setTimeout(() => {
+            mostrarFrutaPensada();
+            jugadaEnCurso = false;
+          }, 100);
+        }
+      }
+    });
   } else {
-    vidasRestantes--;
-    if (vidasRestantes >= 0) {
-      vidas[vidasRestantes].style.visibility = 'hidden';
-    }
-
-    if (vidasRestantes === 0) {
-      alert('¡Juego terminado!');
-      window.location.reload();
-    } else {
-      setTimeout(() => {
-        mostrarFrutaPensada();
-        jugadaEnCurso = false;
-      }, 300);
-    }
+    jugadaEnCurso = false;
   }
 }
+
+
+function animarExplosion(frutaImg, callback) {
+  const frames = [
+    "bubble_pop_frame_02",
+    "bubble_pop_frame_03",
+    "bubble_pop_frame_04",
+    "bubble_pop_frame_05",
+    "bubble_pop_frame_06"
+  ];
+
+  const originalSrc = frutaImg.src;
+
+  let index = 0;
+  const intervalo = setInterval(() => {
+    if (index < frames.length) {
+      frutaImg.src = `../assets/${frames[index]}.png`;
+      index++;
+    } else {
+      clearInterval(intervalo);
+      frutaImg.src = originalSrc; // opcional si quieres volver a mostrar fruta
+      if (callback) callback();
+    }
+  }, 50); // velocidad de cambio entre frames (puedes ajustar)
+}
+
 
 frutasEnPantalla.forEach((frutaHTML) => {
   frutaHTML.addEventListener('click', () => {
