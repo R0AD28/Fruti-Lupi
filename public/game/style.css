@@ -195,3 +195,115 @@ body {
   animation: sacudir 0.4s ease;
 }
 
+
+#puntaje {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  background-color: rgba(0,0,0,0.6);
+  padding: 10px 20px;
+  border-radius: 15px;
+}
+
+#formulario-puntaje {
+  margin-top: 20px;
+}
+
+#formulario-puntaje input {
+  padding: 8px;
+  font-size: 1rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#tabla-puntajes {
+  margin-top: 30px;
+  text-align: left;
+}
+
+#tabla-puntajes table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#tabla-puntajes th,
+#tabla-puntajes td {
+  border: 1px solid #999;
+  padding: 8px 12px;
+}
+
+#tabla-puntajes th {
+  background-color: #eee;
+}
+
+#game-over-screen {
+  flex-direction: column;
+  gap: 20px;
+}
+
+#formulario-puntaje {
+  text-align: center;
+}
+
+#formulario-puntaje input {
+  width: 80%;
+  max-width: 250px;
+  padding: 10px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 2px solid #000;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+#guardar-puntaje {
+  background-color: #4CAF50;
+  color: white;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+#guardar-puntaje:hover {
+  background-color: #388e3c;
+}
+
+#tabla-puntajes {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#tabla-puntajes table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#tabla-puntajes th, #tabla-puntajes td {
+  border: 1px solid #aaa;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+#tabla-puntajes th {
+  background-color: #f1f1f1;
+}
+
+#btn-reiniciar, #btn-menu {
+  margin-top: 20px;
+  padding: 10px 25px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+}
+

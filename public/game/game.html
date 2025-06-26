@@ -15,6 +15,8 @@
     <img src="../assets/corazon.png" class="vida" />
   </div>
 
+  <div id="puntaje">Puntaje: <span id="valor-puntaje">0</span></div>
+
   <div id="contenedor-frutas">
     <div class="burbuja-fruta">
       <img src="../assets/naranja_burbuja.png" class="fruta" data-fruta="naranja" alt="Fruta" />
@@ -40,6 +42,26 @@
   <div id="game-over-screen" class="oculto">
     <div class="game-over-box">
       <h1>¡Juego Terminado!</h1>
+      <div id="formulario-puntaje">
+        <p>Tu puntaje final es: <span id="puntaje-final"></span></p>
+        <input type="text" id="nombre-jugador" placeholder="Tu nombre" />
+        <button id="guardar-puntaje">Guardar Puntaje</button>
+      </div>
+
+      <div id="tabla-puntajes">
+        <h2>Puntajes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Jugador</th>
+              <th>Puntaje</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body">
+          </tbody>
+        </table>
+      </div>
+
       <button id="btn-reiniciar">Reiniciar</button>
       <button id="btn-menu">Menú Principal</button>
     </div>

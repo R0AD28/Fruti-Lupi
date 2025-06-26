@@ -11,6 +11,18 @@ let vidasRestantes = 3;
 let frutaEnPantalla = false; // Evita mostrar múltiples frutas
 let puedeLeer = true;        // Controla lectura del ESP32
 let jugadaEnCurso = false;   // Bloquea múltiples ejecuciones al presionar fruta
+let puntajeGuardado = false; // ← inicializa en falso
+
+
+
+let puntaje = 0;
+const valorPuntaje = document.getElementById("valor-puntaje");
+const puntajeFinal = document.getElementById("puntaje-final");
+const nombreInput = document.getElementById("nombre-jugador");
+const botonGuardar = document.getElementById("guardar-puntaje");
+const cuerpoTabla = document.getElementById("tabla-body");
+
+
 
 const pantallaFinal = document.getElementById("game-over-screen");
 const btnReiniciar = document.getElementById("btn-reiniciar");
@@ -70,7 +82,7 @@ function verificarFruta(frutaPresionada) {
   const frutaImg = [...frutasEnPantalla].find(img => img.dataset.fruta === frutaPresionada);
 
   if (frutaImg) {
-    
+
     if (frutaPresionada !== frutaCorrecta) {
       frutasEnPantalla.forEach(el => {
         el.classList.add('temblor');
@@ -79,6 +91,8 @@ function verificarFruta(frutaPresionada) {
     }
     animarExplosion(frutaImg, () => {
       if (frutaPresionada === frutaCorrecta) {
+        puntaje += 100;
+      valorPuntaje.textContent = puntaje;
         setTimeout(() => {
           mostrarFrutaPensada();
           jugadaEnCurso = false;
@@ -91,6 +105,7 @@ function verificarFruta(frutaPresionada) {
 
         if (vidasRestantes === 0) {
           pantallaFinal.classList.remove("oculto");
+          puntajeFinal.textContent = puntaje;
         } else {
           setTimeout(() => {
             mostrarFrutaPensada();
@@ -164,3 +179,42 @@ setInterval(() => {
     })
     .catch(error => console.error("Error al obtener estado desde ESP32:", error));
 }, 200); // Consulta rápida para captar pulsaciones a tiempo
+
+botonGuardar.addEventListener("click", () => {
+  const nombre = nombreInput.value.trim();
+  if (nombre === "") return alert("Ingresa tu nombre");
+
+  guardarPuntaje(nombre, puntaje);
+  nombreInput.value = "";
+  puntajeGuardado = true; // ← Ahora sí está guardado
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const puntajesGuardados = JSON.parse(localStorage.getItem("puntajes")) || [];
+  renderizarTabla(puntajesGuardados);
+  puntajeGuardado = false; // ← Cada vez que inicia el juego, se resetea
+});
+
+btnReiniciar.addEventListener("click", () => {
+  if (!puntajeGuardado) {
+    const confirmar = confirm("⚠️ ¡No has guardado tu puntaje! ¿Seguro que quieres reiniciar?");
+    if (!confirmar) return;
+  }
+  window.location.reload();
+});
+
+function guardarPuntaje(nombre, puntos) {
+  const puntajesGuardados = JSON.parse(localStorage.getItem("puntajes")) || [];
+  puntajesGuardados.push({ nombre, puntos });
+  localStorage.setItem("puntajes", JSON.stringify(puntajesGuardados));
+  renderizarTabla(puntajesGuardados);
+}
+
+function renderizarTabla(puntajesArray) {
+  cuerpoTabla.innerHTML = ""; // Limpia la tabla
+  puntajesArray.forEach(p => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `<td>${p.nombre}</td><td>${p.puntos}</td>`;
+    cuerpoTabla.appendChild(fila);
+  });
+}
