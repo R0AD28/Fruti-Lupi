@@ -61,6 +61,7 @@ function mostrarFrutaPensada() {
 
       void frutaPensadaImg.offsetWidth;
       frutaPensadaImg.classList.add('animada');
+      iniciarBarraTiempo(); // ← Agrega esta línea
     }
   }, 100);
 }
@@ -72,6 +73,7 @@ setTimeout(() => {
 
 function verificarFruta(frutaPresionada) {
   if (jugadaEnCurso) return;
+  pausarBarraTiempo();
   jugadaEnCurso = true;
 
   const frutaCorrecta = frutaActual;
@@ -92,11 +94,12 @@ function verificarFruta(frutaPresionada) {
     animarExplosion(frutaImg, () => {
       if (frutaPresionada === frutaCorrecta) {
         puntaje += 100;
-      valorPuntaje.textContent = puntaje;
+        valorPuntaje.textContent = puntaje;
         setTimeout(() => {
           mostrarFrutaPensada();
           jugadaEnCurso = false;
         }, 100);
+        return;
       } else {
         vidasRestantes--;
         if (vidasRestantes >= 0) {
@@ -129,7 +132,7 @@ function animarExplosion(frutaImg, callback) {
     "bubble_pop_frame_06"
   ];
 
-  // Sonido burbuja pop
+
   const popSound = new Audio("../assets/music/pop_sound.mp3");
   popSound.volume = 0.6;
   popSound.play().catch(err => console.error("Error al reproducir sonido pop:", err));
@@ -143,10 +146,10 @@ function animarExplosion(frutaImg, callback) {
       index++;
     } else {
       clearInterval(intervalo);
-      frutaImg.src = originalSrc; // opcional si quieres volver a mostrar fruta
+      frutaImg.src = originalSrc;
       if (callback) callback();
     }
-  }, 50); // velocidad de cambio entre frames (puedes ajustar)
+  }, 50);
 }
 
 
@@ -186,13 +189,13 @@ botonGuardar.addEventListener("click", () => {
 
   guardarPuntaje(nombre, puntaje);
   nombreInput.value = "";
-  puntajeGuardado = true; // ← Ahora sí está guardado
+  puntajeGuardado = true;
 });
 
 document.addEventListener("DOMContentLoaded", () => {
   const puntajesGuardados = JSON.parse(localStorage.getItem("puntajes")) || [];
   renderizarTabla(puntajesGuardados);
-  puntajeGuardado = false; // ← Cada vez que inicia el juego, se resetea
+  puntajeGuardado = false;
 });
 
 btnReiniciar.addEventListener("click", () => {
@@ -211,10 +214,62 @@ function guardarPuntaje(nombre, puntos) {
 }
 
 function renderizarTabla(puntajesArray) {
-  cuerpoTabla.innerHTML = ""; // Limpia la tabla
+  cuerpoTabla.innerHTML = "";
   puntajesArray.forEach(p => {
     const fila = document.createElement("tr");
     fila.innerHTML = `<td>${p.nombre}</td><td>${p.puntos}</td>`;
     cuerpoTabla.appendChild(fila);
   });
+}
+
+
+let tiempoMaximo = 5; 
+let tiempoRestante = tiempoMaximo;
+let intervaloTiempo;
+const barraTiempo = document.getElementById("barra-tiempo");
+
+function iniciarBarraTiempo() {
+  clearInterval(intervaloTiempo);
+  tiempoRestante = tiempoMaximo;
+  actualizarBarra();
+
+  intervaloTiempo = setInterval(() => {
+    tiempoRestante -= 0.1;
+    actualizarBarra();
+
+    if (tiempoRestante <= 0) {
+      clearInterval(intervaloTiempo);
+      perderVidaPorTiempo();
+    }
+  }, 100);
+}
+
+function actualizarBarra() {
+  const porcentaje = Math.max(0, (tiempoRestante / tiempoMaximo) * 100);
+  barraTiempo.style.width = `${porcentaje}%`;
+}
+
+function perderVidaPorTiempo() {
+  frutaEnPantalla = false;
+  vidasRestantes--;
+  if (vidasRestantes >= 0) {
+    vidas[vidasRestantes].style.visibility = 'hidden';
+  }
+
+  if (vidasRestantes === 0) {
+    pantallaFinal.classList.remove("oculto");
+    puntajeFinal.textContent = puntaje;
+  } else {
+    setTimeout(() => {
+      mostrarFrutaPensada();
+      jugadaEnCurso = false;
+    }, 100);
+  }
+}
+function pausarBarraTiempo() {
+  clearInterval(intervaloTiempo);
+}
+
+function reanudarBarraTiempo() {
+  iniciarBarraTiempo();
 }
