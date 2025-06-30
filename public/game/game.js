@@ -109,6 +109,7 @@ function verificarFruta(frutaPresionada) {
         if (vidasRestantes === 0) {
           pantallaFinal.classList.remove("oculto");
           puntajeFinal.textContent = puntaje;
+          pausarJuegoCompleto();
         } else {
           setTimeout(() => {
             mostrarFrutaPensada();
@@ -272,4 +273,11 @@ function pausarBarraTiempo() {
 
 function reanudarBarraTiempo() {
   iniciarBarraTiempo();
+}
+
+function pausarJuegoCompleto() {
+  pausarBarraTiempo();     
+  puedeLeer = false;        
+  frutaEnPantalla = true;   
+  jugadaEnCurso = true;     
 }
