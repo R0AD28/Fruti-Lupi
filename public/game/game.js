@@ -1,3 +1,7 @@
+import { iniciarMusica } from './musica.js';
+
+iniciarMusica();
+
 const frutas = ['naranja', 'sandia', 'uva', 'aguacate'];
 
 const pensamientoDiv = document.getElementById('pensamiento');
