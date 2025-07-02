@@ -77,58 +77,56 @@ setTimeout(() => {
 
 function verificarFruta(frutaPresionada) {
   if (jugadaEnCurso) return;
-  pausarBarraTiempo();
   jugadaEnCurso = true;
+  
+  pausarBarraTiempo(); 
 
-  const frutaCorrecta = frutaActual;
-  frutaEnPantalla = false;
-
-  console.log('Presionaste:', frutaPresionada, '| Debías presionar:', frutaCorrecta);
-
+  const esAcierto = (frutaPresionada === frutaActual);
   const frutaImg = [...frutasEnPantalla].find(img => img.dataset.fruta === frutaPresionada);
 
-  if (frutaImg) {
-
-    if (frutaPresionada !== frutaCorrecta) {
-      frutasEnPantalla.forEach(el => {
-        el.classList.add('temblor');
-        setTimeout(() => el.classList.remove('temblor'), 400);
-      });
-    }
-    animarExplosion(frutaImg, () => {
-      if (frutaPresionada === frutaCorrecta) {
-        // LED verde
-        fetch(`${ESP32_IP}/acierto`).catch(err => console.warn("Error al enviar acierto:", err));
-        puntaje += 100;
-        valorPuntaje.textContent = puntaje;
-        setTimeout(() => {
-          mostrarFrutaPensada();
-          jugadaEnCurso = false;
-        }, 100);
-        return;
-      } else {
-        // LED rojo
-        fetch(`${ESP32_IP}/error`).catch(err => console.warn("Error al enviar error:", err));
-        vidasRestantes--;
-        if (vidasRestantes >= 0) {
-          vidas[vidasRestantes].style.visibility = 'hidden';
-        }
-
-        if (vidasRestantes === 0) {
-          pantallaFinal.classList.remove("oculto");
-          puntajeFinal.textContent = puntaje;
-          pausarJuegoCompleto();
-        } else {
-          setTimeout(() => {
-            mostrarFrutaPensada();
-            jugadaEnCurso = false;
-          }, 100);
-        }
-      }
-    });
-  } else {
+  if (!frutaImg) {
     jugadaEnCurso = false;
+    return; 
   }
+
+  // Si no es acierto, temblor y actualización de vidas
+  if (!esAcierto) {
+    fetch(`${ESP32_IP}/error`).catch(err => console.warn("Error al enviar error:", err));
+    frutasEnPantalla.forEach(el => {
+      el.classList.add('temblor');
+      setTimeout(() => el.classList.remove('temblor'), 400);
+    });
+    vidasRestantes--;
+    if (vidasRestantes >= 0) {
+      vidas[vidasRestantes].style.visibility = 'hidden';
+    }
+  } else {
+     fetch(`${ESP32_IP}/acierto`).catch(err => console.warn("Error al enviar acierto:", err));
+  }
+  
+  // Realiza la animación de explosión
+  animarExplosion(frutaImg, () => {
+    
+    if (vidasRestantes === 0) {
+      pantallaFinal.classList.remove("oculto");
+      puntajeFinal.textContent = puntaje;
+      pausarJuegoCompleto(); 
+      return;
+    }
+
+    
+    if (esAcierto) {
+      puntaje += 100;
+      valorPuntaje.textContent = puntaje;
+    }
+
+    
+    frutaEnPantalla = false;
+    setTimeout(() => {
+      mostrarFrutaPensada(); // Esto reiniciará la barra de tiempo para la nueva fruta
+      jugadaEnCurso = false;  // Desbloquea para la siguiente jugada
+    }, 100);
+  });
 }
 
 
@@ -170,7 +168,7 @@ frutasEnPantalla.forEach((frutaHTML) => {
 });
 
 // IP del ESP32
-const ESP32_IP = "http://192.168.137.215"; // Ip del arduino
+const ESP32_IP = "http://192.168.137.128"; // Ip del arduino
 
 setInterval(() => {
   if (!puedeLeer) return;
@@ -268,6 +266,7 @@ function perderVidaPorTiempo() {
   if (vidasRestantes === 0) {
     pantallaFinal.classList.remove("oculto");
     puntajeFinal.textContent = puntaje;
+    pausarJuegoCompleto();
   } else {
     setTimeout(() => {
       mostrarFrutaPensada();
