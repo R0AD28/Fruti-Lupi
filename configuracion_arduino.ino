@@ -2,22 +2,23 @@
 #include <WebServer.h>
 
 // Configuracion red WiFi
-const char* ssid = "TuSSID";          // <-- Cambiar esto por tu red WiFi
-const char* password = "clave1234";   // <-- Cambiar esto por tu contraseña
+const char* ssid = "TuSSID";          // <-- Cambiar por tu red
+const char* password = "Clave1234";   // <-- Cambiar por tu clave
 
 // Pines de botones físicos y frutas
-const int buttonPins[] = {13, 14, 27, 32};  // Ajustar según los pines que se usen
+const int buttonPins[] = {13, 14, 27, 32};
 const char* fruits[] = {"Naranja", "Sandia", "Uva", "Aguacate"};
-
 bool lastStates[4] = {HIGH, HIGH, HIGH, HIGH};
 String lastPressed = "Ninguno";
 unsigned long lastSentTime = 0;
 
+// Pines de LEDs
+const int ledAcierto = 25; // LED verde
+const int ledError = 26;   // LED rojo
 
-// Servidor web para visualizar botones
 WebServer server(80);
 
-// Página web de prueba (se puede sacar)
+// Página de prueba (opcional)
 void handleRoot() {
   String html = R"rawliteral(
     <!DOCTYPE html>
@@ -25,11 +26,6 @@ void handleRoot() {
     <head>
       <meta charset="UTF-8">
       <title>Botón presionado</title>
-      <style>
-        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-        h1 { color: #333; }
-        h2 { color: green; }
-      </style>
     </head>
     <body>
       <h1>Último botón presionado:</h1>
@@ -46,25 +42,49 @@ void handleRoot() {
     </body>
     </html>
   )rawliteral";
-
   server.send(200, "text/html", html);
 }
 
-// Ruta para que la interfaz obtenga la fruta presionada
+// Estado actual del botón
 void handleEstado() {
-  server.sendHeader("Access-Control-Allow-Origin", "*"); // NECESARIO
+  server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send(200, "text/plain", lastPressed);
+}
+
+// Ruta para acierto
+void handleAcierto() {
+  digitalWrite(ledAcierto, HIGH);
+  digitalWrite(ledError, LOW);
+  delay(500);
+  digitalWrite(ledAcierto, LOW);
+
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", "OK");
+}
+
+// Ruta para error
+void handleError() {
+  digitalWrite(ledError, HIGH);
+  digitalWrite(ledAcierto, LOW);
+  delay(500);
+  digitalWrite(ledError, LOW);
+
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", "OK");
 }
 
 void setup() {
   Serial.begin(115200);
 
-  // Inicializa pines de botones con pull-up interno
   for (int i = 0; i < 4; i++) {
     pinMode(buttonPins[i], INPUT_PULLUP);
   }
 
-  // Conectar al WiFi
+  pinMode(ledAcierto, OUTPUT);
+  pinMode(ledError, OUTPUT);
+  digitalWrite(ledAcierto, LOW);
+  digitalWrite(ledError, LOW);
+
   WiFi.begin(ssid, password);
   Serial.print("Conectando a WiFi");
   while (WiFi.status() != WL_CONNECTED) {
@@ -76,35 +96,31 @@ void setup() {
   Serial.print("Dirección IP del ESP32: ");
   Serial.println(WiFi.localIP());
 
-  // Configura rutas del servidor
-  server.on("/", handleRoot);         // Página de prueba (opcional)
-  server.on("/estado", handleEstado); // Para que el navegador consulte
-
+  server.on("/", handleRoot);
+  server.on("/estado", handleEstado);
+  server.on("/acierto", handleAcierto);
+  server.on("/error", handleError);
   server.begin();
+
   Serial.println("Servidor web iniciado.");
 }
 
 void loop() {
   server.handleClient();
 
-  // Revisa cada botón
   for (int i = 0; i < 4; i++) {
     bool currentState = digitalRead(buttonPins[i]);
-
     if (lastStates[i] == HIGH && currentState == LOW) {
       lastPressed = fruits[i];
       Serial.println("Botón presionado: " + lastPressed);
-      lastSentTime = millis();  // <-- Aquí se actualiza el tiempo del último botón
+      lastSentTime = millis();
     }
-
     lastStates[i] = currentState;
   }
 
-  // Restablecer el valor luego de 500ms
   if (lastPressed != "Ninguno" && millis() - lastSentTime > 500) {
     lastPressed = "Ninguno";
   }
 
-  delay(50); // Antirrebote
+  delay(50);
 }
-

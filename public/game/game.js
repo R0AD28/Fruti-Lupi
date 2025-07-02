@@ -97,6 +97,8 @@ function verificarFruta(frutaPresionada) {
     }
     animarExplosion(frutaImg, () => {
       if (frutaPresionada === frutaCorrecta) {
+        // LED verde
+        fetch(`${ESP32_IP}/acierto`).catch(err => console.warn("Error al enviar acierto:", err));
         puntaje += 100;
         valorPuntaje.textContent = puntaje;
         setTimeout(() => {
@@ -105,6 +107,8 @@ function verificarFruta(frutaPresionada) {
         }, 100);
         return;
       } else {
+        // LED rojo
+        fetch(`${ESP32_IP}/error`).catch(err => console.warn("Error al enviar error:", err));
         vidasRestantes--;
         if (vidasRestantes >= 0) {
           vidas[vidasRestantes].style.visibility = 'hidden';
@@ -166,7 +170,7 @@ frutasEnPantalla.forEach((frutaHTML) => {
 });
 
 // IP del ESP32
-const ESP32_IP = "http://192.168.142.71"; // Ip del arduino
+const ESP32_IP = "http://192.168.137.215"; // Ip del arduino
 
 setInterval(() => {
   if (!puedeLeer) return;
