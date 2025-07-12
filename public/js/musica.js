@@ -1,7 +1,6 @@
-
-const musicaDeFondo = new Audio('../assets/music/soundtrack.mp3'); 
+const musicaDeFondo = new Audio('../assets/music/soundtrack.mp3');
 musicaDeFondo.loop = true;
-musicaDeFondo.volume = 0.6; 
+musicaDeFondo.volume = 0.6;
 
 export function iniciarMusica() {
   console.log("Intentando reproducir música...");
@@ -15,5 +14,5 @@ export function iniciarMusica() {
 
 export function detenerMusica() {
   musicaDeFondo.pause();
-  musicaDeFondo.currentTime = 0; 
+  musicaDeFondo.currentTime = 0;
 }

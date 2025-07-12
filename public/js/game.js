@@ -37,7 +37,7 @@ btnReiniciar.addEventListener("click", () => {
 });
 
 btnMenu.addEventListener("click", () => {
-  window.location.href = "../index.html";
+  window.location.href = "/";
 });
 
 
@@ -53,7 +53,7 @@ function mostrarFrutaPensada() {
   const maxCambios = 12;
   const intervalo = setInterval(() => {
     const frutaTemp = frutas[Math.floor(Math.random() * frutas.length)];
-    frutaPensadaImg.src = `../assets/${frutaTemp}_pensada.png`;
+    frutaPensadaImg.src = `/assets/${frutaTemp}_pensada.png`;
     cambios++;
 
     if (cambios >= maxCambios) {
@@ -61,11 +61,11 @@ function mostrarFrutaPensada() {
 
       const frutaFinal = frutas[Math.floor(Math.random() * frutas.length)];
       frutaActual = frutaFinal;
-      frutaPensadaImg.src = `../assets/${frutaFinal}_pensada.png`;
+      frutaPensadaImg.src = `/assets/${frutaFinal}_pensada.png`;
 
       void frutaPensadaImg.offsetWidth;
       frutaPensadaImg.classList.add('animada');
-      iniciarBarraTiempo(); // ← Agrega esta línea
+      iniciarBarraTiempo();
     }
   }, 100);
 }
@@ -79,14 +79,14 @@ function verificarFruta(frutaPresionada) {
   if (jugadaEnCurso) return;
   jugadaEnCurso = true;
   
-  pausarBarraTiempo(); 
+  pausarBarraTiempo();
 
   const esAcierto = (frutaPresionada === frutaActual);
   const frutaImg = [...frutasEnPantalla].find(img => img.dataset.fruta === frutaPresionada);
 
   if (!frutaImg) {
     jugadaEnCurso = false;
-    return; 
+    return;
   }
 
   // Si no es acierto, temblor y actualización de vidas
@@ -110,7 +110,7 @@ function verificarFruta(frutaPresionada) {
     if (vidasRestantes === 0) {
       pantallaFinal.classList.remove("oculto");
       puntajeFinal.textContent = puntaje;
-      pausarJuegoCompleto(); 
+      pausarJuegoCompleto();
       return;
     }
 
@@ -140,7 +140,7 @@ function animarExplosion(frutaImg, callback) {
   ];
 
 
-  const popSound = new Audio("../assets/music/pop_sound.mp3");
+  const popSound = new Audio("/assets/music/pop_sound.mp3");
   popSound.volume = 0.6;
   popSound.play().catch(err => console.error("Error al reproducir sonido pop:", err));
 
@@ -149,7 +149,7 @@ function animarExplosion(frutaImg, callback) {
   let index = 0;
   const intervalo = setInterval(() => {
     if (index < frames.length) {
-      frutaImg.src = `../assets/${frames[index]}.png`;
+      frutaImg.src = `/assets/${frames[index]}.png`;
       index++;
     } else {
       clearInterval(intervalo);
