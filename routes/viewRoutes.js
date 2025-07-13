@@ -24,4 +24,8 @@ router.get('/game', protegerRuta, (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'views', 'game.html'));
 });
 
+router.get('/game-inteligente', protegerRuta, (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'views', 'game_inteligente.html'));
+});
+
 module.exports = router;

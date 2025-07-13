@@ -81,6 +81,8 @@ function verificarFruta(frutaPresionada) {
   
   pausarBarraTiempo();
 
+  const tiempoReaccion = tiempoMaximo - tiempoRestante;
+
   const esAcierto = (frutaPresionada === frutaActual);
   const frutaImg = [...frutasEnPantalla].find(img => img.dataset.fruta === frutaPresionada);
 
@@ -88,6 +90,7 @@ function verificarFruta(frutaPresionada) {
     jugadaEnCurso = false;
     return;
   }
+
 
   // Si no es acierto, temblor y actualización de vidas
   if (!esAcierto) {
@@ -124,6 +127,7 @@ function verificarFruta(frutaPresionada) {
     if (esAcierto) {
       puntaje += 50;
       valorPuntaje.textContent = puntaje;
+      pedirAdaptacionDelJuego(tiempoReaccion);
     }
 
     
@@ -133,6 +137,49 @@ function verificarFruta(frutaPresionada) {
       jugadaEnCurso = false;  // Desbloquea para la siguiente jugada
     }, 100);
   });
+}
+
+async function pedirAdaptacionDelJuego(tiempoReaccion) {
+    const estadoActual = {
+        puntaje: puntaje,
+        vidas: vidasRestantes,
+        tiempo_reaccion: tiempoReaccion
+    };
+
+    try {
+        const response = await fetch('/ia/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(estadoActual)
+        });
+        const result = await response.json();
+
+        if (result.prediction) {
+            console.log("Decisión de la IA:", result.prediction);
+            // Ahora, adapta el juego basado en la predicción
+            adaptarJuego(result.prediction);
+        }
+    } catch (error) {
+        console.error("Error al contactar al servidor de IA:", error);
+    }
+}
+
+// NUEVA FUNCIÓN para cambiar las reglas del juego
+function adaptarJuego(accion) {
+    switch(accion) {
+        case 'aumentar_tiempo':
+            tiempoMaximo = Math.min(10, tiempoMaximo + 1); // Aumenta el tiempo, con un máximo de 10s
+            console.log("Tiempo máximo ahora:", tiempoMaximo);
+            break;
+        case 'reducir_tiempo':
+            tiempoMaximo = Math.max(3, tiempoMaximo - 0.5); // Reduce el tiempo, con un mínimo de 3s
+            console.log("Tiempo máximo ahora:", tiempoMaximo);
+            break;
+        case 'fruta_extra':
+            // Lógica para añadir una fruta extra en la pantalla
+            break;
+        // ... otras acciones que tu modelo pueda predecir
+    }
 }
 
 

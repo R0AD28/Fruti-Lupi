@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 
 const viewRoutes = require('./routes/viewRoutes');
 const apiRoutes = require('./routes/apiRoutes');
+const intelligentGameRoutes = require('./routes/intelligentGameRoutes');
 
 // Inicializar la conexión a la base de datos
 require('./config/db');
@@ -29,8 +30,8 @@ app.use(session({
 
 
 app.use('/api', apiRoutes);
-
 app.use('/', viewRoutes);
+app.use('/ia', intelligentGameRoutes); 
 
 
 app.listen(port, () => {
