@@ -8,16 +8,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Ruslan+Display&display=swap" rel="stylesheet" />
 
 </head>
-
 <body>
   <div class="menu-container">
     <img id="logo" src="/assets/cartelCompleto.png" alt="Fruti Lupi" />
-    <button id="btn-iniciar-juego">TOCA PARA INICIAR</button>
-    <button id="btn-iniciar-inteligente">Juego Inteligente</button>
+    
+    <!-- NUEVO Contenedor para los botones -->
+    <div class="menu-actions">
+        <button id="btn-iniciar-juego">Juego Normal</button>
+        <button id="btn-iniciar-inteligente">Juego Inteligente</button>
+        <!-- Puedes añadir más botones aquí, como "Instrucciones" o "Salir" -->
+    </div>
+      <button id="btn-cambiar" class="btn-logout">Cambiar de Niño</button>
+
     <img id="lupi" src="/assets/Lupi.png" alt="Lupi" />
   </div>
 
   <script type="module" src="/js/menu.js"></script>
-  <script type="module" src="../game/musica.js"></script>
+  <!-- La ruta de musica.js está corregida -->
+  <script type="module" src="/js/musica.js"></script>
 </body>
 </html>

@@ -8,25 +8,37 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>¿Quién juega hoy?</h1>
         
-        <!-- Cargar los perfiles de los niños dinámicamente -->
-        <div id="user-selection-grid" class="user-selection-grid">
+        <!-- Panel principal con estilo de cartel -->
+        <div class="login-panel">
+            <h1>¿Quién juega hoy?</h1>
 
+            <!-- Formulario de Login con lista desplegable -->
+            <form id="login-form" class="login-form">
+                <div class="select-container">
+                    <select id="user-select-list" required>
+                        <option value="" disabled selected>Selecciona tu nombre...</option>
+                        <!-- Los nombres se cargarán aquí dinámicamente -->
+                    </select>
+                </div>
+                <button type="submit" class="btn-accion">¡A Jugar!</button>
+            </form>
+    
+            <button id="open-register-modal" class="btn-secundario">Soy un niño nuevo</button>
         </div>
 
-        <button id="open-register-modal" class="btn-register">Soy un niño nuevo</button>
     </div>
 
-    <!-- Modal de Registro -->
+    <!-- Modal de Registro (con estilo mejorado) -->
     <div id="register-modal" class="modal-overlay">
         <div class="modal-content">
             <span id="close-modal-btn" class="modal-close-btn">×</span>
             <h2>¡Bienvenido!</h2>
+            <p class="modal-subtitle">Crea tu perfil para jugar</p>
             <form id="register-form">
                 <input type="text" id="register-nombre" placeholder="Escribe tu nombre" required>
                 <input type="number" id="register-edad" placeholder="¿Cuántos años tienes?" required min="3">
-                <button type="submit">¡Registrarme!</button>
+                <button type="submit" class="btn-accion">¡Registrarme!</button>
             </form>
             <p id="mensaje-error" class="error-msg"></p>
         </div>
