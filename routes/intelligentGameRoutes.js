@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { PythonShell } = require('python-shell');
+const { spawn } = require('child_process');
 const path = require('path');
 
-// Middleware de protección para asegurar que el usuario ha iniciado sesión
+// (tu middleware protegerRuta está bien)
 const protegerRuta = (req, res, next) => {
     if (req.session.usuario) {
         next();
@@ -12,30 +12,36 @@ const protegerRuta = (req, res, next) => {
     }
 };
 
+
 router.post('/predict', protegerRuta, (req, res) => {
-    // Los datos del estado actual del juego vienen en el body de la petición
-    const gameData = req.body; // ej: { puntaje: 100, vidas: 3, tiempo_reaccion: 1.2 }
+    const dataString = JSON.stringify(req.body);
 
-    const options = {
-        mode: 'text',
-        pythonOptions: ['-u'], // Unbuffered, para que los resultados lleguen rápido
-        scriptPath: path.join(__dirname, '..'), // Apunta a la carpeta raíz del proyecto
-        args: [JSON.stringify(gameData)] // Pasamos los datos como un string JSON
-    };
+    const scriptPath = path.join(__dirname, '..', 'predict.py'); 
 
-    PythonShell.run('predict.py', options, (err, results) => {
-        if (err) {
-            console.error("Error al ejecutar el script de Python:", err);
-            return res.status(500).json({ error: 'Error en el servidor de IA' });
+    const pythonProcess = spawn('python', [scriptPath, dataString]);
+
+    let result = '';
+    let errorOutput = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+        result += data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        errorOutput += data.toString();
+    });
+
+    pythonProcess.on('close', (code) => {
+        if (code !== 0 || errorOutput) {
+            console.error(`Python script exited with code ${code}: ${errorOutput}`);
+            return res.json({ error: errorOutput.trim() || `Python script exited with code ${code}` });
         }
-        
         try {
-            // El resultado de Python es un array de strings, tomamos el primero
-            const predictionResult = JSON.parse(results[0]);
-            res.json(predictionResult);
-        } catch (parseError) {
-            console.error("Error al parsear el resultado de Python:", parseError, "Resultado crudo:", results);
-            res.status(500).json({ error: 'Respuesta inválida del servidor de IA' });
+            const parsed = JSON.parse(result);
+            res.json(parsed);
+        } catch (err) {
+            console.error("Error parseando la respuesta del modelo:", err, "Respuesta cruda:", result);
+            res.json({ error: "Error parseando la respuesta del modelo." });
         }
     });
 });

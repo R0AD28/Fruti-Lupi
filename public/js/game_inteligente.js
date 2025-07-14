@@ -2,357 +2,320 @@ import { iniciarMusica } from './musica.js';
 
 iniciarMusica();
 
-const frutas = ['naranja', 'sandia', 'uva', 'aguacate'];
+const FRUTAS = ['aguacate', 'sandia', 'uva', 'naranja'];
+const FRUTAS_CODIFICADAS = { 'aguacate': 0, 'sandia': 1, 'uva': 2, 'naranja': 3 };
+const ESP32_IP = "http://192.168.137.128";
+const TIEMPO_BLOQUE_IA = 10000; // 10 segundos
+const PUNTOS_POR_ACIERTO = 50;
+
 
 const pensamientoDiv = document.getElementById('pensamiento');
 const frutaPensadaImg = document.getElementById('fruta-pensada');
 const frutasEnPantalla = document.querySelectorAll('.fruta');
-const vidas = document.querySelectorAll('.vida');
-
-let frutaActual = null;
-let vidasRestantes = 3;
-
-let frutaEnPantalla = false; // Evita mostrar múltiples frutas
-let puedeLeer = true;        // Controla lectura del ESP32
-let jugadaEnCurso = false;   // Bloquea múltiples ejecuciones al presionar fruta
-let puntajeGuardado = false; // ← inicializa en falso
-
-
-
-let puntaje = 0;
+const vidasUI = document.querySelectorAll('.vida');
 const valorPuntaje = document.getElementById("valor-puntaje");
-const puntajeFinal = document.getElementById("puntaje-final");
-const nombreInput = document.getElementById("nombre-jugador");
-const botonGuardar = document.getElementById("guardar-puntaje");
-const cuerpoTabla = document.getElementById("tabla-body");
-
-
-
+const barraTiempo = document.getElementById("barra-tiempo");
+const iaMessageContainer = document.getElementById("ia-message-container");
 const pantallaFinal = document.getElementById("game-over-screen");
+const puntajeFinal = document.getElementById("puntaje-final");
+const botonGuardar = document.getElementById("guardar-puntaje");
 const btnReiniciar = document.getElementById("btn-reiniciar");
 const btnMenu = document.getElementById("btn-menu");
 
-btnReiniciar.addEventListener("click", () => {
-  window.location.reload();
-});
+// --- ESTADO DEL JUEGO ---
+let puntaje = 0;
+let vidasRestantes = 3;
+let juegoTerminado = false;
+let jugadaEnCurso = false;
+let puedeLeerESP32 = true;
+let frutaActual = null;
+let frutaEnPantalla = false;
 
-btnMenu.addEventListener("click", () => {
-  window.location.href = "/";
-});
+// Variables para el modelo de IA
+let tiempoTotalJuego = 0;
+let velocidadJuego = 2;   // Segundos entre frutas hasta 0.5
+let tiempoRespuesta = 5.0;  // Segundos para la barra de tiempo hasta 1.5
+let historialErroresFruta = { 'aguacate': 0, 'sandia': 0, 'uva': 0, 'naranja': 0 };
 
+// Contadores para el bloque de 10 segundos
+let erroresBloque = 0;
+let aciertosBloque = 0;
+let frutasMostradasBloque = 0;
+
+// Intervalos
+let intervaloBarraTiempo;
+let intervaloIA;
+
+
+function inicializarJuego() {
+    intervaloIA = setInterval(cicloIA, TIEMPO_BLOQUE_IA);
+    setInterval(leerEstadoESP32, 200);
+
+    frutasEnPantalla.forEach(el => el.addEventListener('click', () => procesarJugada(el.dataset.fruta, 'click')));
+    btnReiniciar.addEventListener('click', () => window.location.reload());
+    btnMenu.addEventListener('click', () => window.location.href = "/menu");
+    botonGuardar.addEventListener('click', () => guardarPuntajeEnServidor(puntaje));
+
+    setTimeout(mostrarFrutaPensada, 1500);
+}
 
 
 function mostrarFrutaPensada() {
-  if (frutaEnPantalla) return;
-  frutaEnPantalla = true;
+    if (frutaEnPantalla || juegoTerminado) return;
+    frutaEnPantalla = true;
+    frutasMostradasBloque++;
 
-  pensamientoDiv.style.display = 'flex';
-  frutaPensadaImg.classList.remove('animada');
-
-  let cambios = 0;
-  const maxCambios = 12;
-  const intervalo = setInterval(() => {
-    const frutaTemp = frutas[Math.floor(Math.random() * frutas.length)];
-    frutaPensadaImg.src = `/assets/${frutaTemp}_pensada.png`;
-    cambios++;
-
-    if (cambios >= maxCambios) {
-      clearInterval(intervalo);
-
-      const frutaFinal = frutas[Math.floor(Math.random() * frutas.length)];
-      frutaActual = frutaFinal;
-      frutaPensadaImg.src = `/assets/${frutaFinal}_pensada.png`;
-
-      void frutaPensadaImg.offsetWidth;
-      frutaPensadaImg.classList.add('animada');
-      iniciarBarraTiempo();
-    }
-  }, 100);
-}
-
-
-setTimeout(() => {
-  mostrarFrutaPensada();
-}, 2000);
-
-function verificarFruta(frutaPresionada) {
-  if (jugadaEnCurso) return;
-  jugadaEnCurso = true;
-  
-  pausarBarraTiempo();
-
-  const tiempoReaccion = tiempoMaximo - tiempoRestante;
-
-  const esAcierto = (frutaPresionada === frutaActual);
-  const frutaImg = [...frutasEnPantalla].find(img => img.dataset.fruta === frutaPresionada);
-
-  if (!frutaImg) {
-    jugadaEnCurso = false;
-    return;
-  }
-
-
-  // Si no es acierto, temblor y actualización de vidas
-  if (!esAcierto) {
-    fetch(`${ESP32_IP}/error`).catch(err => console.warn("Error al enviar error:", err));
-    frutasEnPantalla.forEach(el => {
-      el.classList.add('temblor');
-      setTimeout(() => el.classList.remove('temblor'), 400);
-    });
-    vidasRestantes--;
-    if (vidasRestantes >= 0) {
-      vidas[vidasRestantes].style.visibility = 'hidden';
-    }
-  } else {
-     fetch(`${ESP32_IP}/acierto`).catch(err => console.warn("Error al enviar acierto:", err));
-  }
-  
-  // Realiza la animación de explosión
-  animarExplosion(frutaImg, () => {
-    
-    if (vidasRestantes === 0) {
-      pantallaFinal.classList.remove("oculto");
-      puntajeFinal.textContent = puntaje;
-      pausarJuegoCompleto();
-      terminarJuego();
-      return;
-    }
-    if (vidasRestantes <= 0) {
-            pausarJuegoCompleto();
-            terminarJuego();
-            return;
+    pensamientoDiv.style.display = 'flex';
+    frutaPensadaImg.classList.remove('animada');
+    let cambios = 0;
+    const maxCambios = 12;
+    const animPensamiento = setInterval(() => {
+        frutaPensadaImg.src = `/assets/${FRUTAS[Math.floor(Math.random() * FRUTAS.length)]}_pensada.png`;
+        if (++cambios >= maxCambios) {
+            clearInterval(animPensamiento);
+            frutaActual = FRUTAS[Math.floor(Math.random() * FRUTAS.length)];
+            frutaPensadaImg.src = `/assets/${frutaActual}_pensada.png`;
+            void frutaPensadaImg.offsetWidth;
+            frutaPensadaImg.classList.add('animada');
+            iniciarBarraTiempo();
         }
-
-    
-    if (esAcierto) {
-      puntaje += 50;
-      valorPuntaje.textContent = puntaje;
-      pedirAdaptacionDelJuego(tiempoReaccion);
-    }
-
-    
-    frutaEnPantalla = false;
-    setTimeout(() => {
-      mostrarFrutaPensada(); // Esto reiniciará la barra de tiempo para la nueva fruta
-      jugadaEnCurso = false;  // Desbloquea para la siguiente jugada
     }, 100);
-  });
 }
 
-async function pedirAdaptacionDelJuego(tiempoReaccion) {
-    const estadoActual = {
-        puntaje: puntaje,
-        vidas: vidasRestantes,
-        tiempo_reaccion: tiempoReaccion
+function procesarJugada(frutaPresionada, origen) {
+    if (jugadaEnCurso || juegoTerminado) return;
+    jugadaEnCurso = true;
+    if (origen === 'esp32') puedeLeerESP32 = false;
+
+    pausarBarraTiempo();
+    
+    const esAcierto = (frutaPresionada === frutaActual);
+    if (esAcierto) {
+        puntaje += PUNTOS_POR_ACIERTO;
+        aciertosBloque++;
+        valorPuntaje.textContent = puntaje;
+        if (origen !== 'esp32') fetch(`${ESP32_IP}/acierto`).catch(e => {});
+    } else {
+        vidasRestantes--;
+        erroresBloque++;
+        if(frutaActual) historialErroresFruta[frutaActual]++;
+        actualizarVidasUI();
+        frutasEnPantalla.forEach(el => {
+            el.classList.add('temblor');
+            setTimeout(() => el.classList.remove('temblor'), 400);
+        });
+        if (origen !== 'esp32') fetch(`${ESP32_IP}/error`).catch(e => {});
+    }
+
+    const frutaImg = [...frutasEnPantalla].find(img => img.dataset.fruta === frutaPresionada);
+    animarExplosion(frutaImg, finalizarTurno);
+}
+
+function finalizarTurno() {
+    if (vidasRestantes <= 0) {
+        terminarJuego();
+        return;
+    }
+    frutaEnPantalla = false;
+    jugadaEnCurso = false;
+    if (!puedeLeerESP32) setTimeout(() => { puedeLeerESP32 = true; }, 700);
+    setTimeout(mostrarFrutaPensada, velocidadJuego * 1000);
+}
+
+
+function iniciarBarraTiempo() {
+    pausarBarraTiempo();
+    let tiempoRestante = tiempoRespuesta;
+    const intervaloId = setInterval(() => {
+        if (juegoTerminado) return clearInterval(intervaloId);
+        tiempoRestante -= 0.1;
+        actualizarBarraUI(tiempoRestante);
+        if (tiempoRestante <= 0) {
+            clearInterval(intervaloId);
+            perderVidaPorTiempo();
+        }
+    }, 100);
+    intervaloBarraTiempo = intervaloId;
+}
+
+function actualizarBarraUI(tiempo) {
+    const porcentaje = Math.max(0, (tiempo / tiempoRespuesta) * 100);
+    barraTiempo.style.width = `${porcentaje}%`;
+}
+
+function pausarBarraTiempo() {
+    clearInterval(intervaloBarraTiempo);
+}
+
+function perderVidaPorTiempo() {
+    if (jugadaEnCurso || juegoTerminado) return;
+    jugadaEnCurso = true;
+    
+    erroresBloque++;
+    if(frutaActual) historialErroresFruta[frutaActual]++;
+    vidasRestantes--;
+    actualizarVidasUI();
+    
+    frutasEnPantalla.forEach(el => {
+        el.classList.add('temblor');
+        setTimeout(() => el.classList.remove('temblor'), 400);
+    });
+
+    finalizarTurno();
+}
+
+
+function cicloIA() {
+    if (juegoTerminado) return;
+    const estadoJuego = recolectarDatosParaIA();
+    pedirAdaptacionDelJuego(estadoJuego);
+}
+
+function recolectarDatosParaIA() {
+    tiempoTotalJuego += 10;
+    
+    let frutaDominante = 0, maxErrores = 0;
+    for (const fruta in historialErroresFruta) {
+        if (historialErroresFruta[fruta] > maxErrores) {
+            maxErrores = historialErroresFruta[fruta];
+            frutaDominante = FRUTAS_CODIFICADAS[fruta];
+        }
+    }
+    
+    const datosParaIA = {
+        tiempo_juego: tiempoTotalJuego,
+        frutas_mostradas: frutasMostradasBloque,
+        errores_10s: erroresBloque,
+        aciertos_10s: aciertosBloque,
+        vidas_restantes: vidasRestantes,
+        velocidad_actual: velocidadJuego,
+        fruta_dominante: frutaDominante,
+        errores_fruta: maxErrores
     };
+    
+    console.log("📊 Datos del bloque recolectados:", datosParaIA);
+    return datosParaIA;
+}
+
+async function pedirAdaptacionDelJuego(estadoJuego) {
+    console.log("📊 Datos del bloque enviados a la IA:", estadoJuego);
+    mostrarMensajeIA("🤖 Analizando tu juego...");
 
     try {
         const response = await fetch('/ia/predict', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(estadoActual)
+            body: JSON.stringify(estadoJuego)
         });
         const result = await response.json();
-
         if (result.prediction) {
-            console.log("Decisión de la IA:", result.prediction);
-            // Ahora, adapta el juego basado en la predicción
             adaptarJuego(result.prediction);
+             reiniciarContadoresBloque();
+        } else if (result.error) {
+            console.error("Error devuelto por el script de Python:", result.error);
         }
     } catch (error) {
-        console.error("Error al contactar al servidor de IA:", error);
+        console.error("Error de red al contactar al servidor de IA:", error);
     }
 }
 
-// NUEVA FUNCIÓN para cambiar las reglas del juego
 function adaptarJuego(accion) {
-    switch(accion) {
-        case 'aumentar_tiempo':
-            tiempoMaximo = Math.min(10, tiempoMaximo + 1); // Aumenta el tiempo, con un máximo de 10s
-            console.log("Tiempo máximo ahora:", tiempoMaximo);
+    let mensaje = "";
+    switch (accion) {
+        case 'aumentar_velocidad':
+            velocidadJuego = Math.max(0.5, velocidadJuego - 0.5);
+            tiempoRespuesta = Math.max(1.5, tiempoRespuesta - 0.5);
+            mensaje = "¡Vas muy bien! Aumentando el ritmo 🔥";
             break;
-        case 'reducir_tiempo':
-            tiempoMaximo = Math.max(3, tiempoMaximo - 0.5); // Reduce el tiempo, con un mínimo de 3s
-            console.log("Tiempo máximo ahora:", tiempoMaximo);
+        case 'mantener':
+        default:
+            mensaje = "¡Sigue así! Manteniendo el ritmo 👍";
             break;
-        case 'fruta_extra':
-            // Lógica para añadir una fruta extra en la pantalla
-            break;
-        // ... otras acciones que tu modelo pueda predecir
     }
+    mostrarMensajeIA(mensaje, 2500); 
+    console.log(`🧠 Decisión de la IA aplicada. Nueva velocidad: ${velocidadJuego}s, Tiempo para responder: ${tiempoRespuesta}s`);
 }
 
+function reiniciarContadoresBloque() {
+    erroresBloque = 0;
+    aciertosBloque = 0;
+    frutasMostradasBloque = 0;
+    tiempoTotalJuego=0;
+}
+
+
+function leerEstadoESP32() {
+    if (!puedeLeerESP32 || juegoTerminado) return;
+    fetch(`${ESP32_IP}/estado`).then(res => res.text()).then(fruta => {
+        if (fruta && fruta !== "Ninguno") {
+            procesarJugada(fruta.toLowerCase(), 'esp32');
+        }
+    }).catch(e => { /* Silenciar errores */ });
+}
+
+function mostrarMensajeIA(texto, duracion = 1500) {
+    if (!iaMessageContainer) return;
+    iaMessageContainer.textContent = texto;
+    iaMessageContainer.classList.add('visible');
+    setTimeout(() => iaMessageContainer.classList.remove('visible'), duracion);
+}
+
+function actualizarVidasUI() {
+    vidasUI.forEach((v, i) => v.style.visibility = i < vidasRestantes ? 'visible' : 'hidden');
+}
 
 function animarExplosion(frutaImg, callback) {
-  const frames = [
-    "bubble_pop_frame_02",
-    "bubble_pop_frame_03",
-    "bubble_pop_frame_04",
-    "bubble_pop_frame_05",
-    "bubble_pop_frame_06"
-  ];
-
-
-  const popSound = new Audio("/assets/music/pop_sound.mp3");
-  popSound.volume = 0.6;
-  popSound.play().catch(err => console.error("Error al reproducir sonido pop:", err));
-
-  const originalSrc = frutaImg.src;
-
-  let index = 0;
-  const intervalo = setInterval(() => {
-    if (index < frames.length) {
-      frutaImg.src = `/assets/${frames[index]}.png`;
-      index++;
-    } else {
-      clearInterval(intervalo);
-      frutaImg.src = originalSrc;
-      if (callback) callback();
-    }
-  }, 50);
-}
-
-
-frutasEnPantalla.forEach((frutaHTML) => {
-  frutaHTML.addEventListener('click', () => {
-    const frutaPresionada = frutaHTML.dataset.fruta;
-    verificarFruta(frutaPresionada);
-  });
-});
-
-// IP del ESP32
-const ESP32_IP = "http://192.168.137.128"; // Ip del arduino
-
-setInterval(() => {
-  if (!puedeLeer) return;
-
-  fetch(`${ESP32_IP}/estado`)
-    .then(response => response.text())
-    .then(frutaPresionada => {
-      console.log("Respuesta desde ESP32:", frutaPresionada);
-
-      if (frutaPresionada !== "Ninguno") {
-        puedeLeer = false;
-        verificarFruta(frutaPresionada.toLowerCase());
-
-        setTimeout(() => {
-          puedeLeer = true;
-        }, 700); // Espera suficiente para evitar rebotes del ESP32
-      }
-    })
-    .catch(error => console.error("Error al obtener estado desde ESP32:", error));
-}, 200); // Consulta rápida para captar pulsaciones a tiempo
-
-async function guardarPuntajeEnServidor(puntos) {
-  try {
-    const response = await fetch('/api/save-score', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ puntos: puntos }), // Enviamos el puntaje en formato JSON
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      console.log('¡Puntaje guardado exitosamente en el servidor!');
-      // Retroalimentación visual para el usuario
-      botonGuardar.textContent = '¡Guardado!';
-      botonGuardar.disabled = true; // Deshabilitar para no guardar dos veces
-      botonGuardar.style.backgroundColor = '#5d4037'; // Cambiar color a uno oscuro
-    } else {
-      console.error('Error al guardar el puntaje:', data.message);
-      alert('Hubo un problema al guardar tu puntaje. Intenta de nuevo.');
-    }
-  } catch (error) {
-    console.error('Error de red al intentar guardar el puntaje:', error);
-    alert('No se pudo conectar con el servidor para guardar el puntaje.');
-  }
-}
-
-
-botonGuardar.addEventListener("click", () => {
-  guardarPuntajeEnServidor(puntaje);
-});
-
-
-btnReiniciar.addEventListener("click", () => {
-  if (!puntajeGuardado) {
-    const confirmar = confirm("⚠️ ¡No has guardado tu puntaje! ¿Seguro que quieres reiniciar?");
-    if (!confirmar) return;
-  }
-  window.location.reload();
-});
-
-
-
-let tiempoMaximo = 5;
-let tiempoRestante = tiempoMaximo;
-let intervaloTiempo;
-const barraTiempo = document.getElementById("barra-tiempo");
-
-function iniciarBarraTiempo() {
-  clearInterval(intervaloTiempo);
-  tiempoRestante = tiempoMaximo;
-  actualizarBarra();
-
-  intervaloTiempo = setInterval(() => {
-    tiempoRestante -= 0.1;
-    actualizarBarra();
-
-    if (tiempoRestante <= 0) {
-      clearInterval(intervaloTiempo);
-      perderVidaPorTiempo();
-    }
-  }, 100);
-}
-
-function actualizarBarra() {
-  const porcentaje = Math.max(0, (tiempoRestante / tiempoMaximo) * 100);
-  barraTiempo.style.width = `${porcentaje}%`;
-}
-
-function perderVidaPorTiempo() {
-  frutaEnPantalla = false;
-  vidasRestantes--;
-  if (vidasRestantes >= 0) {
-    vidas[vidasRestantes].style.visibility = 'hidden';
-  }
-   if (vidasRestantes <= 0) {
-            pausarJuegoCompleto();
-            terminarJuego();
-            return;
+    if (!frutaImg) { if (callback) callback(); return; }
+    const frames = ["bubble_pop_frame_02","bubble_pop_frame_03","bubble_pop_frame_04","bubble_pop_frame_05","bubble_pop_frame_06"];
+    const popSound = new Audio("/assets/music/pop_sound.mp3");
+    popSound.volume = 0.6;
+    popSound.play().catch(e => {});
+    const originalSrc = frutaImg.src;
+    let index = 0;
+    const anim = setInterval(() => {
+        if (index < frames.length) frutaImg.src = `/assets/${frames[index++]}.png`;
+        else {
+            clearInterval(anim);
+            frutaImg.src = originalSrc;
+            if (callback) callback();
         }
-
-  if (vidasRestantes === 0) {
-    pantallaFinal.classList.remove("oculto");
-    puntajeFinal.textContent = puntaje;
-    pausarJuegoCompleto();
-    terminarJuego();
-  } else {
-    setTimeout(() => {
-      mostrarFrutaPensada();
-      jugadaEnCurso = false;
-    }, 100);
-  }
-}
-function pausarBarraTiempo() {
-  clearInterval(intervaloTiempo);
+    }, 50);
 }
 
-function reanudarBarraTiempo() {
-  iniciarBarraTiempo();
-}
-
-function terminarJuego() {
-    puntajeFinal.textContent = puntaje;
-    pantallaFinal.classList.remove("oculto");
+// --- FINALIZACIÓN ---
+async function guardarPuntajeEnServidor(puntos) {
+    try {
+        const response = await fetch('/api/save-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ puntos }),
+        });
+        const data = await response.json();
+        if (data.success) {
+            botonGuardar.textContent = '¡Guardado!';
+            botonGuardar.disabled = true;
+        } else {
+            alert(`Hubo un problema: ${data.message}`);
+        }
+    } catch (error) {
+        alert('No se pudo conectar para guardar el puntaje.');
+    }
 }
 
 function pausarJuegoCompleto() {
-  pausarBarraTiempo();     
-  puedeLeer = false;        
-  frutaEnPantalla = true;   
-  jugadaEnCurso = true;     
+    juegoTerminado = true;
+    clearInterval(intervaloIA);
+    pausarBarraTiempo();
+    puedeLeerESP32 = false;
+    jugadaEnCurso = true;
 }
+
+function terminarJuego() {
+    if (juegoTerminado) return;
+    pausarJuegoCompleto();
+    cicloIA(); 
+    puntajeFinal.textContent = puntaje;
+    pantallaFinal.classList.remove("oculto");
+}
+
+inicializarJuego();
