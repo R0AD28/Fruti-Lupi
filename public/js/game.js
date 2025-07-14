@@ -3,7 +3,8 @@ import { iniciarMusica } from './musica.js';
 iniciarMusica();
 
 const frutas = ['naranja', 'sandia', 'uva', 'aguacate'];
-
+// IP del ESP32
+const ESP32_IP = "http://192.168.137.134"; // Ip del arduino
 const pensamientoDiv = document.getElementById('pensamiento');
 const frutaPensadaImg = document.getElementById('fruta-pensada');
 const frutasEnPantalla = document.querySelectorAll('.fruta');
@@ -173,8 +174,7 @@ frutasEnPantalla.forEach((frutaHTML) => {
   });
 });
 
-// IP del ESP32
-const ESP32_IP = "http://192.168.137.128"; // Ip del arduino
+
 
 setInterval(() => {
   if (!puedeLeer) return;
