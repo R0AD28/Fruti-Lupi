@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,55 +9,57 @@
   <link href="https://fonts.googleapis.com/css2?family=Ruslan+Display&display=swap" rel="stylesheet" />
 
 </head>
+
 <body>
   <div class="menu-container">
-    
+
     <a href="/" class="btn-home" title="Cambiar de Niño">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" />
       </svg>
     </a>
 
     <button id="btn-leaderboard" class="btn-trophy" title="Ver Puntajes">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v4h-2zm0 6h2v2h-2z" fill="none"/> <!-- Path de un trofeo simple -->
-        <path d="M20.5 3l-1.41-1.41c-.78-.78-2.05-.78-2.83 0L12 6.17 7.74 1.91c-.78-.78-2.05-.78-2.83 0L3.5 3H2v2h1.5l1.41 1.41c.78.78 2.05.78 2.83 0L12 3.83l4.26 4.26c.78.78 2.05.78 2.83 0L20.5 5H22V3h-1.5zM12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 10c-3.87 0-7-3.13-7-7h14c0 3.87-3.13 7-7 7z"/>
-      </svg>
-    </button>
-    
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 11.63 21 9.55 21 7V5c0-1.1-.9-2-2-2zm-7 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+  </svg>
+</button>
+
     <img id="logo" src="/assets/cartelCompleto.png" alt="Fruti Lupi" />
-    
+
     <div class="menu-actions">
-        <button id="btn-iniciar-juego">Juego Normal</button>
-        <button id="btn-iniciar-inteligente">Juego Inteligente</button>
+      <button id="btn-iniciar-juego">Juego Normal</button>
+      <button id="btn-iniciar-inteligente">Juego Inteligente</button>
     </div>
 
     <img id="lupi" src="/assets/Lupi.png" alt="Lupi" />
-    
+
   </div>
 
   <div id="leaderboard-modal" class="modal-overlay">
     <div class="modal-content">
-        <span id="close-leaderboard-modal" class="modal-close-btn">×</span>
-        <h2>Mejores Puntajes</h2>
-        <div class="leaderboard-table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nº</th>
-                        <th>Jugador</th>
-                        <th>Puntaje</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard-table-body">
-                    <!-- Las filas se cargarán aquí dinámicamente -->
-                </tbody>
-            </table>
-        </div>
+      <span id="close-leaderboard-modal" class="modal-close-btn">×</span>
+      <h2>Mejores Puntajes</h2>
+      <div class="leaderboard-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Nº</th>
+              <th>Jugador</th>
+              <th>Puntaje</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-table-body">
+            <!-- Las filas se cargarán aquí dinámicamente -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script type="module" src="/js/menu.js"></script>
   <script type="module" src="/js/musica.js"></script>
 </body>
+
 </html>
