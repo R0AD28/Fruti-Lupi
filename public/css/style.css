@@ -261,15 +261,15 @@ body {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px); /* Desenfoque para un efecto moderno */
-  display: flex; /* Usamos flex para centrar perfectamente */
+  backdrop-filter: blur(5px); 
+  display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  opacity: 0; /* Inicia invisible para la animación */
+  opacity: 0; 
   transition: opacity 0.3s ease-in-out;
   font-family: 'Comic Sans MS', cursive, sans-serif;
-  pointer-events: none; /* No se puede hacer clic cuando está oculto */
+  pointer-events: none; 
 }
 
 #game-over-screen:not(.oculto) {
@@ -278,8 +278,8 @@ body {
 }
 
 .game-over-box {
-  background-color: #fffae1; /* Color crema cálido */
-  border: 8px solid #a1662f; /* Borde de madera */
+  background-color: #fffae1; 
+  border: 8px solid #a1662f; 
   border-radius: 30px;
   padding: 30px 50px;
   text-align: center;
@@ -288,9 +288,8 @@ body {
   max-width: 500px;
   font-family: 'Ruslan Display', cursive;
   
-  /* Animación de entrada */
   transform: scale(0.8);
-  transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); /* Efecto "rebote" */
+  transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
 }
 
 #game-over-screen:not(.oculto) .game-over-box {
@@ -315,20 +314,17 @@ body {
 
 .final-score-label {
   font-size: 1.5rem;
-  color: #8d6e63; /* Café grisáceo */
+  color: #8d6e63;
   margin: 0;
 }
 
 .final-score-value {
   font-size: 4.5rem;
-  color: #5d4037; /* Café oscuro */
+  color: #5d4037;
   line-height: 1;
   margin: 0;
 }
 
-/* --- Estilos de los Botones --- */
-
-/* Botón principal (Guardar Puntaje) */
 .btn-accion {
   display: block;
   width: 100%;
@@ -336,7 +332,7 @@ body {
   margin-bottom: 20px;
   font-size: 1.8rem;
   font-family: 'Ruslan Display', cursive;
-  background-color: #5cb85c; /* Verde hoja */
+  background-color: #5cb85c;
   color: white;
   border: none;
   border-radius: 15px;
@@ -354,27 +350,27 @@ body {
   box-shadow: 0 2px #387038;
 }
 
-/* Estilo para el botón cuando está deshabilitado */
+
 .btn-accion:disabled {
-  background-color: #8d6e63; /* Color café/gris */
+  background-color: #8d6e63;
   box-shadow: 0 6px #5d4037;
   cursor: not-allowed;
 }
 
-/* Contenedor para los botones secundarios */
+
 .game-over-actions {
   display: flex;
   justify-content: center;
   gap: 20px;
 }
 
-/* Botones secundarios (Jugar de Nuevo, Menú) */
+
 .btn-secundario {
-  flex-grow: 1; /* Para que ocupen el mismo espacio */
+  flex-grow: 1; 
   padding: 12px;
   font-size: 1.2rem;
   font-family: 'Ruslan Display', cursive;
-  background-color: #f48a00; /* Naranja */
+  background-color: #f48a00; 
   color: white;
   border: none;
   border-radius: 12px;
@@ -408,7 +404,6 @@ body {
 }
 
 
-/* --- Estilos para Mensajes de la IA --- */
 .ia-message {
     position: absolute;
     bottom: 20px;
@@ -424,7 +419,7 @@ body {
     z-index: 1001;
     opacity: 0;
     transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-    pointer-events: none; /* No se puede hacer clic en el mensaje */
+    pointer-events: none;
 }
 
 .ia-message.visible {

@@ -22,7 +22,6 @@ html {
 .login-panel {
     background-color: #fffae1;
     background-image: url('/assets/wood_texture.png');
-    /* Opcional: textura de madera */
     border: 10px solid #a1662f;
     border-radius: 35px;
     padding: 40px 50px;
@@ -42,7 +41,6 @@ html {
     }
 }
 
-/* --- Formulario y Lista Desplegable --- */
 .login-form {
     display: flex;
     flex-direction: column;

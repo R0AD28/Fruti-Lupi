@@ -129,8 +129,8 @@ function verificarFruta(frutaPresionada) {
     
     frutaEnPantalla = false;
     setTimeout(() => {
-      mostrarFrutaPensada(); // Esto reiniciará la barra de tiempo para la nueva fruta
-      jugadaEnCurso = false;  // Desbloquea para la siguiente jugada
+      mostrarFrutaPensada();
+      jugadaEnCurso = false;
     }, 100);
   });
 }

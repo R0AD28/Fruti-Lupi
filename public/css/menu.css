@@ -1,43 +1,34 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* --- Estilos Generales --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Ruslan Display', cursive, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    background-image: url('/assets/escenario.jpg');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
 }
 
-body {
-  height: 100vh;
-  width: 100vw;
-  background-image: url('/assets/escenario.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-  overflow: hidden;
-}
-
+/* --- Contenedor Principal --- */
 .menu-container {
-  position: relative;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 30px;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 5vh;
 }
 
 #logo {
-  width: 700px;
-}
-
-button {
-  margin-top: 50px;
-  font-family: 'Ruslan Display', cursive;
-  font-size: 50px;
-  background: transparent;
-  border: none;
-  color: white;
-  cursor: pointer;
+    width: 60%;
+    max-width: 700px;
+    height: auto;
+    margin-bottom: 2vh;
 }
 
 #lupi {
@@ -47,59 +38,98 @@ button {
   height: 40vh;
   margin: 50px;
 }
-button:hover {
-  color: rgb(0, 0, 0);
-  transform: scale(1.05);
+
+.btn-home {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #ffca28;
+    border: 3px solid #a15c00;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 5px #a15c00, 0 8px 15px rgba(0,0,0,0.3);
+    transition: all 0.15s ease-out;
 }
 
-/* --- Contenedor de Botones --- */
+.btn-home svg {
+    width: 32px;
+    height: 32px;
+    fill: #5d4037;
+}
+
+.btn-home:hover {
+    background-color: #ffd54f;
+    transform: translateY(-2px);
+    box-shadow: 0 7px #a15c00, 0 10px 20px rgba(0,0,0,0.25);
+}
+
+.btn-home:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px #a15c00, 0 4px 8px rgba(0,0,0,0.3);
+}
+
+
+/* --- Contenedor de Botones de Juego --- */
 .menu-actions {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px; /* Espacio entre botones */
+    gap: 220px;
     margin-top: 3vh;
 }
 
-/* --- ESTILO DE BOTÓN MEJORADO --- */
+/* Estilo de Botón Principal */
 .menu-actions button {
     font-family: 'Ruslan Display', cursive;
-    font-size: clamp(2rem, 5vw, 3.5rem); /* Tamaño de fuente adaptable */
+    font-size: clamp(2rem, 5vw, 3.5rem);
     color: white;
-    background-color: #f48a00; /* Naranja del juego */
-    border: 4px solid #a15c00; /* Borde oscuro para profundidad */
+    background-color: #f48a00; 
+    border: 4px solid #a15c00; 
     border-radius: 20px;
     padding: 10px 40px;
     cursor: pointer;
-    text-shadow: 2px 2px 0 #a15c00; /* Sombra interna para efecto de grabado */
-    box-shadow: 0 8px 0 #a15c00, 0 12px 20px rgba(0,0,0,0.4); /* Sombra 3D */
+    text-shadow: 2px 2px 0 #a15c00; 
+    box-shadow: 0 8px 0 #a15c00, 0 12px 20px rgba(0,0,0,0.4); 
     transition: all 0.15s ease-out;
 }
 
+/* Estilo específico para el botón de juego normal */
+#btn-iniciar-juego {
+  background-color: #e94e77; 
+  border-color: #a72d4e;
+  text-shadow: 2px 2px 0 #a72d4e;
+  box-shadow: 0 8px 0 #a72d4e, 0 12px 20px rgba(0,0,0,0.4); 
+}
+#btn-iniciar-juego:hover {
+  background-color: #f06a8f;
+}
+#btn-iniciar-juego:active {
+    box-shadow: 0 2px 0 #a72d4e, 0 6px 10px rgba(0,0,0,0.4);
+}
+
+/* Estilo específico para el botón de juego inteligente */
+#btn-iniciar-inteligente {
+    background-color: #f48a00; /* Verde */
+    border-color: #a15c00;
+    text-shadow: 2px 2px 0 #a15c00;
+    box-shadow: 0 8px 0 #a15c00, 0 12px 20px rgba(0,0,0,0.4);
+}
+#btn-iniciar-inteligente:hover {
+    background-color: #f48a00;
+}
+#btn-iniciar-inteligente:active {
+    box-shadow: 0 2px 0 #a15c00, 0 6px 10px rgba(0,0,0,0.4);
+}
+
 .menu-actions button:hover {
-    background-color: #ff9d1a;
     transform: translateY(-2px);
-    box-shadow: 0 10px 0 #a15c00, 0 14px 25px rgba(0,0,0,0.3);
 }
 
 .menu-actions button:active {
     transform: translateY(4px);
-    box-shadow: 0 2px 0 #a15c00, 0 6px 10px rgba(0,0,0,0.4);
-}
-
-
-/* --- Botón de Salir/Cambiar de Niño --- */
-.btn-logout {
-    font-family: Arial, sans-serif; /* Fuente más legible para un botón secundario */
-    font-size: 1rem;
-    color: #fff;
-    background-color: rgba(0,0,0,0.3);
-    padding: 8px 15px;
-    border-radius: 50px;
-    margin-top: 150px;
-    transition: background-color 0.2s;
-}
-
-.btn-logout:hover {
-    background-color: rgba(0,0,0,0.5);
 }

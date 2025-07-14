@@ -10,21 +10,26 @@
 </head>
 <body>
   <div class="menu-container">
+    
+    <!-- BOTÓN DE SALIR (CASA) - AHORA ES UN ENLACE <a> -->
+    <a href="/" class="btn-home" title="Cambiar de Niño">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+      </svg>
+    </a>
+    
     <img id="logo" src="/assets/cartelCompleto.png" alt="Fruti Lupi" />
     
-    <!-- NUEVO Contenedor para los botones -->
     <div class="menu-actions">
         <button id="btn-iniciar-juego">Juego Normal</button>
         <button id="btn-iniciar-inteligente">Juego Inteligente</button>
-        <!-- Puedes añadir más botones aquí, como "Instrucciones" o "Salir" -->
     </div>
-      <button id="btn-cambiar" class="btn-logout">Cambiar de Niño</button>
 
     <img id="lupi" src="/assets/Lupi.png" alt="Lupi" />
+    
   </div>
 
   <script type="module" src="/js/menu.js"></script>
-  <!-- La ruta de musica.js está corregida -->
   <script type="module" src="/js/musica.js"></script>
 </body>
 </html>

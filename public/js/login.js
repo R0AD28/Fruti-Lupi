@@ -8,13 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('register-form');
     const errorMessage = document.getElementById('mensaje-error');
 
-    // --- 1. Cargar y llenar la lista desplegable de usuarios ---
+    // 1. Cargar y llenar la lista
     async function fetchAndDisplayUsers() {
         try {
             const response = await fetch('/api/users');
             const users = await response.json();
             
-            // Limpiar opciones antiguas, manteniendo la primera opción deshabilitada
+
             userSelectList.innerHTML = '<option value="" disabled selected>Selecciona tu nombre...</option>';
 
             users.forEach(user => {
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 2. Manejar el envío del formulario de login ---
+    // 2. Manejar el envío del formulario de login 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nombreSeleccionado = userSelectList.value;
@@ -46,13 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await response.json();
         if (data.success) {
-            window.location.href = '/menu'; // Redirige al menú principal
+            window.location.href = '/menu'; 
         } else {
             alert('Hubo un error al iniciar sesión. Intenta de nuevo.');
         }
     });
 
-    // --- 3. Lógica para el modal de registro (sin cambios, ya es correcta) ---
+    // 3. Lógica para el modal de registro
     openModalBtn.addEventListener('click', () => {
         modal.classList.add('visible');
     });
@@ -87,6 +87,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Cargar los usuarios al iniciar la página
     fetchAndDisplayUsers();
 });
