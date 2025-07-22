@@ -41,6 +41,11 @@ let frutasMostradasBloque = 0;
 let intervaloBarraTiempo;
 let intervaloIA;
 
+const trofeosUI = document.querySelectorAll('.trofeo');
+let totalAciertos = 0;
+let trofeosGanados = 0;
+
+
 function inicializarJuego() {
   intervaloIA = setInterval(cicloIA, TIEMPO_BLOQUE_IA);
   setInterval(leerEstadoESP32, 200);
@@ -93,6 +98,9 @@ function procesarJugada(frutaPresionada, origen) {
     puntaje += PUNTOS_POR_ACIERTO;
     aciertosBloque++;
     valorPuntaje.textContent = puntaje;
+
+    totalAciertos++;
+    verificarTrofeos()
 
     fetch(`${ESP32_IP}/acierto`).catch(e => console.warn("Error enviando acierto:", e));
   } else {
@@ -332,4 +340,12 @@ function terminarJuego() {
   pantallaFinal.classList.remove("oculto");
 }
 
+function verificarTrofeos() {
+    const umbrales = [10, 25, 50]; // Umbrales para ganar trofeos
+    
+    if (trofeosGanados < 3 && totalAciertos >= umbrales[trofeosGanados]) {
+        trofeosUI[trofeosGanados].classList.remove('inactivo');
+        trofeosGanados++;
+    }
+}
 inicializarJuego();

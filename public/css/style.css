@@ -177,7 +177,7 @@ body {
 #puntaje {
   position: absolute;
   top: 20px;
-  right: 20px;
+  right: 125px;
   font-size: 2rem;
   font-weight: bold;
   color: white;
@@ -425,4 +425,28 @@ body {
 .ia-message.visible {
     opacity: 1;
     transform: translateX(-50%) translateY(-20px);
+}
+
+
+/* --- ESTILOS PARA LOS TROFEOS --- */
+#trofeos-container {
+  position: absolute;
+  top: 95px; /* Posicionado debajo del puntaje */
+  right: 90px;
+  display: flex;
+  gap: 15px; /* Espacio entre los trofeos */
+  z-index: 100;
+}
+
+.trofeo {
+  height: 13vh; /* Un poco más pequeños que las vidas */
+  width: auto;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+  transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); /* Transición suave con rebote */
+}
+
+/* Clase para los trofeos que aún no se han ganado */
+.trofeo.inactivo {
+    filter: grayscale(100%) opacity(0.5);
+    transform: scale(0.9); /* Ligeramente más pequeños cuando están inactivos */
 }

@@ -27,7 +27,9 @@ const nombreInput = document.getElementById("nombre-jugador");
 const botonGuardar = document.getElementById("guardar-puntaje");
 const cuerpoTabla = document.getElementById("tabla-body");
 
-
+const trofeosUI = document.querySelectorAll('.trofeo');
+let totalAciertos = 0;
+let trofeosGanados = 0;
 
 const pantallaFinal = document.getElementById("game-over-screen");
 const btnReiniciar = document.getElementById("btn-reiniciar");
@@ -125,6 +127,8 @@ function verificarFruta(frutaPresionada) {
     if (esAcierto) {
       puntaje += 50;
       valorPuntaje.textContent = puntaje;
+      totalAciertos++;      
+      verificarTrofeos();
     }
 
     
@@ -308,4 +312,13 @@ function pausarJuegoCompleto() {
   puedeLeer = false;        
   frutaEnPantalla = true;   
   jugadaEnCurso = true;     
+}
+
+function verificarTrofeos() {
+    const umbrales = [10, 25, 50]; // Umbrales para ganar trofeos
+    
+    if (trofeosGanados < 3 && totalAciertos >= umbrales[trofeosGanados]) {
+        trofeosUI[trofeosGanados].classList.remove('inactivo');
+        trofeosGanados++;
+    }
 }

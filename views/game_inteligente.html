@@ -20,6 +20,12 @@
   </div>
 
   <div id="puntaje">Puntaje: <span id="valor-puntaje">0</span></div>
+  <div id="trofeos-container">
+    <img src="/assets/trofeo.png" class="trofeo inactivo" alt="Trofeo" />
+    <img src="/assets/trofeo.png" class="trofeo inactivo" alt="Trofeo" />
+    <img src="/assets/trofeo.png" class="trofeo inactivo" alt="Trofeo" />
+  </div>
+
   <div id="ia-message-container" class="ia-message"></div>
 
   <div id="contenedor-frutas">
@@ -41,27 +47,27 @@
   <img id="lupi" src="/assets/Lupi.png" alt="" />
   <div id="pensamiento">
     <img id="burbuja" src="/assets/pensamiento.png" alt="Pensamiento" />
-    <img id="fruta-pensada"/>
+    <img id="fruta-pensada" />
   </div>
 
-   <div id="game-over-screen" class="oculto">
+  <div id="game-over-screen" class="oculto">
     <div class="game-over-box">
       <h1>¡Juego Terminado!</h1>
-      
+
       <div class="final-score-container">
         <p class="final-score-label">Tu Puntaje Final</p>
         <p id="puntaje-final" class="final-score-value">0</p>
       </div>
-      
+
       <button id="guardar-puntaje" class="btn-accion">Guardar Puntaje</button>
-      
+
       <div class="game-over-actions">
         <button id="btn-reiniciar" class="btn-secundario">Jugar de Nuevo</button>
         <button id="btn-menu" class="btn-secundario">Menú Principal</button>
       </div>
     </div>
   </div>
-  
+
 
   <script type="module" src="/js/musica.js"></script>
   <script type="module" src="/js/game_inteligente.js"></script>
