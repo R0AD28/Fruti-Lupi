@@ -176,8 +176,8 @@ body {
 
 #puntaje {
   position: absolute;
-  top: 20px;
-  right: 125px;
+  top: 150px; /* Posicionado debajo del puntaje */
+  right: 90px;
   font-size: 2rem;
   font-weight: bold;
   color: white;
@@ -431,12 +431,13 @@ body {
 /* --- ESTILOS PARA LOS TROFEOS --- */
 #trofeos-container {
   position: absolute;
-  top: 95px; /* Posicionado debajo del puntaje */
-  right: 90px;
+  top: 20px; /* Posicionado debajo del puntaje */
+  right: 50px;
   display: flex;
   gap: 15px; /* Espacio entre los trofeos */
   z-index: 100;
 }
+
 
 .trofeo {
   height: 13vh; /* Un poco más pequeños que las vidas */
