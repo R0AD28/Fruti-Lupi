@@ -177,7 +177,9 @@ body {
 #puntaje {
   position: absolute;
   top: 150px; /* Posicionado debajo del puntaje */
-  right: 90px;
+  right: 55px;
+  width: 230px;
+  text-align: center;
   font-size: 2rem;
   font-weight: bold;
   color: white;

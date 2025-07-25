@@ -31,6 +31,8 @@ const trofeosUI = document.querySelectorAll('.trofeo');
 let totalAciertos = 0;
 let trofeosGanados = 0;
 
+let entradasBloqueadas = true;
+
 const pantallaFinal = document.getElementById("game-over-screen");
 const btnReiniciar = document.getElementById("btn-reiniciar");
 const btnMenu = document.getElementById("btn-menu");
@@ -40,13 +42,14 @@ btnReiniciar.addEventListener("click", () => {
 });
 
 btnMenu.addEventListener("click", () => {
-  window.location.href = "/";
+  window.location.href = "/menu";
 });
 
 
 
 function mostrarFrutaPensada() {
   if (frutaEnPantalla) return;
+  entradasBloqueadas = true;
   frutaEnPantalla = true;
 
   pensamientoDiv.style.display = 'flex';
@@ -68,6 +71,8 @@ function mostrarFrutaPensada() {
 
       void frutaPensadaImg.offsetWidth;
       frutaPensadaImg.classList.add('animada');
+
+      entradasBloqueadas = false;
       iniciarBarraTiempo();
     }
   }, 100);
@@ -79,7 +84,7 @@ setTimeout(() => {
 }, 2000);
 
 function verificarFruta(frutaPresionada) {
-  if (jugadaEnCurso) return;
+  if (jugadaEnCurso || entradasBloqueadas) return;
   jugadaEnCurso = true;
   
   pausarBarraTiempo();
@@ -133,6 +138,7 @@ function verificarFruta(frutaPresionada) {
 
     
     frutaEnPantalla = false;
+    entradasBloqueadas = true;
     setTimeout(() => {
       mostrarFrutaPensada();
       jugadaEnCurso = false;
@@ -181,7 +187,7 @@ frutasEnPantalla.forEach((frutaHTML) => {
 
 
 setInterval(() => {
-  if (!puedeLeer) return;
+  if (!puedeLeer || entradasBloqueadas) return;
 
   fetch(`${ESP32_IP}/estado`)
     .then(response => response.text())
@@ -235,10 +241,10 @@ botonGuardar.addEventListener("click", () => {
 
 
 btnReiniciar.addEventListener("click", () => {
-  if (!puntajeGuardado) {
-    const confirmar = confirm("⚠️ ¡No has guardado tu puntaje! ¿Seguro que quieres reiniciar?");
-    if (!confirmar) return;
-  }
+  //if (!puntajeGuardado) {
+  //  const confirmar = confirm("⚠️ ¡No has guardado tu puntaje! ¿Seguro que quieres reiniciar?");
+  //  if (!confirmar) return;
+  //}
   window.location.reload();
 });
 
@@ -288,6 +294,7 @@ function perderVidaPorTiempo() {
     pausarJuegoCompleto();
     terminarJuego();
   } else {
+    entradasBloqueadas = true; 
     setTimeout(() => {
       mostrarFrutaPensada();
       jugadaEnCurso = false;
@@ -311,7 +318,8 @@ function pausarJuegoCompleto() {
   pausarBarraTiempo();     
   puedeLeer = false;        
   frutaEnPantalla = true;   
-  jugadaEnCurso = true;     
+  jugadaEnCurso = true;  
+  entradasBloqueadas = true;   
 }
 
 function verificarTrofeos() {

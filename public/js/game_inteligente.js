@@ -44,6 +44,7 @@ let intervaloIA;
 const trofeosUI = document.querySelectorAll('.trofeo');
 let totalAciertos = 0;
 let trofeosGanados = 0;
+let entradasBloqueadas = true;
 
 
 function inicializarJuego() {
@@ -63,6 +64,7 @@ function inicializarJuego() {
 
 function mostrarFrutaPensada() {
   if (frutaEnPantalla || juegoTerminado) return;
+  entradasBloqueadas = true; 
   frutaEnPantalla = true;
   frutasMostradasBloque++;
 
@@ -79,13 +81,18 @@ function mostrarFrutaPensada() {
       frutaPensadaImg.src = `/assets/${frutaActual}_pensada.png`;
       void frutaPensadaImg.offsetWidth;
       frutaPensadaImg.classList.add('animada');
+      entradasBloqueadas = false;
       iniciarBarraTiempo();
     }
   }, 100);
 }
 
 function procesarJugada(frutaPresionada, origen) {
-  if (jugadaEnCurso || juegoTerminado) return;
+  if (jugadaEnCurso || juegoTerminado || entradasBloqueadas) {
+        console.log("Clic ignorado (entradas bloqueadas).");
+        return;
+    }
+
   jugadaEnCurso = true;
 
   if (origen === 'esp32') puedeLeerESP32 = false;
@@ -129,6 +136,7 @@ function finalizarTurno() {
 
   frutaEnPantalla = false;
   jugadaEnCurso = false;
+  entradasBloqueadas = true; 
 
   if (!puedeLeerESP32) {
     setTimeout(() => {
